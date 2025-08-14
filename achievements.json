@@ -1,0 +1,47 @@
+{
+  "brainrotted": {
+    "title": "Brainrotted!",
+    "description": "_ _",
+    "category": "common"
+  },
+  "tf_you_want": {
+    "title": "Tf you want?",
+    "description": "_ _",
+    "category": "common"
+  },
+  "welcome": {
+    "title": "Welcome",
+    "description": "_ _",
+    "category": "common"
+  },
+  "gl": {
+    "title": "GL",
+    "description": "_ _",
+    "category": "legendary"
+  },
+  "u_gay_shall_be": {
+    "title": "u gay shall be",
+    "description": "_ _",
+    "category": "uncommon"
+  },
+  "i_love_you": {
+    "title": "I love you!",
+    "description": "_ _",
+    "category": "epic"
+  },
+  "gambling_addict": {
+    "title": "Gambling addiction",
+    "description": "_ _",
+    "category": "uncommon"
+  },
+  "the_grand_list": {
+    "title": "The Grand List!",
+    "description": "_ _",
+    "category": "common"
+  },
+  "timeouted": {
+    "title": "Tf did u do??? 😭",
+    "description": "_ _",
+    "category": "secret"
+  }
+}
