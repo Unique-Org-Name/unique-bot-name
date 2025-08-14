@@ -1,4 +1,4 @@
-# unique-bot-name
+# Unique Bot Name *(or UBN)*
 Did you know that unique-bot-name is open-source? no? then cool.
 
 # How to run
