@@ -2004,12 +2004,6 @@ def main():
 
     # Replace with your bot token
     BOT_TOKEN = str(os.getenv("TOKEN"))
-
-    if BOT_TOKEN == "YOUR_BOT_TOKEN_HERE":
-        print("\n❌ ERROR: Please set your bot token in the BOT_TOKEN variable!")
-        print("Get your token from: https://discord.com/developers/applications")
-        return
-
     bot.run(BOT_TOKEN)
 
 if __name__ == "__main__":
