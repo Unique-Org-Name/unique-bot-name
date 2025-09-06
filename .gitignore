@@ -205,3 +205,7 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# so we dont flood github and keep the repo clean
+assets/catapi*
+*.db
