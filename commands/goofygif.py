@@ -1,3 +1,7 @@
+import discord
+from discord import app_commands
+import random
+
 goofy_gifs = {
     1: "https://tenor.com/view/finally-yeah-boy-nice-yes-fridge-gif-4687827172351383981",
     2: "https://cdn.discordapp.com/attachments/773986571434721320/1400123591323812023/5D81CCCE-B4E0-4E3E-9678-193BBE70F7C5.gif",
@@ -26,7 +30,6 @@ goofy_gifs = {
     25: "https://tenor.com/view/download-carmen-winstead-quandale-dingle-gif-25824098"
 }
 
-@bot.tree.command(name="goofygif", description="my name is quindile dingle hehehehehehehehe")
 async def goofygif_command(interaction: discord.Interaction):
     random_num = random.randint(1, 25)
     print(goofy_gifs[random_num])  # debugging stuff
@@ -43,3 +46,8 @@ async def goofygif_command(interaction: discord.Interaction):
         await interaction.followup.send(goofy_gif)
     else:
         await interaction.response.send_message(goofy_gif)
+
+def setup(bot):
+    @bot.tree.command(name="goofygif", description="my name is quindile dingle hehehehehehehehe")
+    async def goofygif_slash_command(interaction: discord.Interaction):
+        await goofygif_command(interaction)

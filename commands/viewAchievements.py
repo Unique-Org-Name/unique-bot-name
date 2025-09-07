@@ -1,10 +1,14 @@
-@bot.tree.command(name="achievements", description="View your achievements")
+import discord
+from discord import app_commands
+from datetime import datetime
+from utils.achievements import load_achievements, get_user_achievements, check_and_give_achievement
+from utils.user import upsert_profile
+
 async def achievements_command(interaction: discord.Interaction, user: discord.Member = None):
     target_user = user if user else interaction.user
     await check_and_give_achievement(target_user, "the_grand_list", interaction.channel)
-    # Ensure user has profile
-    get_or_create_profile(target_user.id, target_user.display_name)
-
+    # Ensure user has profile in the db
+    upsert_profile(target_user.id, target_user.display_name)
     # Load all achievements
     all_achievements = load_achievements()
     user_achievements = get_user_achievements(target_user.id)
@@ -37,11 +41,16 @@ async def achievements_command(interaction: discord.Interaction, user: discord.M
             else:
                 achievement_list.append(f"🔒 **{ach_data['title']}**\n└ {ach_data['description']}")
 
-        embed.add_field(
-            name=f"{category.title()} ({sum(1 for ach_id, _ in achievements if ach_id in unlocked_ids)}/{len(achievements)})",
-            value="\n\n".join(achievement_list),
-            inline=False
-        )
+    embed.add_field(
+        name=f"{category.title()} ({sum(1 for ach_id, _ in achievements if ach_id in unlocked_ids)}/{len(achievements)})",
+        value="\n\n".join(achievement_list),
+        inline=False
+    )
 
     embed.set_footer(text="Complete challenges to unlock more achievements!")
     await interaction.response.send_message(embed=embed)
+
+def setup(bot):
+    @bot.tree.command(name="achievements", description="View your achievements")
+    async def achievements_slash_command(interaction: discord.Interaction, user: discord.Member = None):
+        await achievements_command(interaction, user)

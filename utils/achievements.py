@@ -1,3 +1,7 @@
+from utils.user import upsert_profile
+import json
+import sqlite3
+
 # Initialize achievements database
 def init_achievements_db():
     conn = sqlite3.connect('bot_data.db')
@@ -30,8 +34,8 @@ def init_achievements_db():
 # load achievements from json file
 def load_achievements():
     try:
-        with open("achievements.json", "r") as f:
-            return json.load(f)
+        with open("./achievements.json", "r") as f:
+            return json.loads(f.read())
     except FileNotFoundError:
         print("achievements.json not found!")
         return {}
@@ -53,10 +57,8 @@ def unlock_achievement(user_id, achievement_id):
     # ensure the user doesnt already have the achievement
     if has_achievement(user_id, achievement_id):
         return False
-
     conn = sqlite3.connect('bot_data.db')
     cursor = conn.cursor()
-
     try:
         # Add achievement
         cursor.execute('''
@@ -96,10 +98,8 @@ def get_user_achievements(user_id):
     conn.close()
     return achievements
 
-
-
 # Send achievement notification
-async def send_achievement_notification(channel, user, achievement_id, achievement_data):
+async def send_achievement_notification(channel, user, achievement_data):
     embed = discord.Embed(
         title="<:normal:1402996994883977237>👍 Achievement Unlocked!",
         description=f"**{achievement_data['title']}**\n{achievement_data['description']}",
@@ -131,10 +131,10 @@ async def check_and_give_achievement(user, achievement_id, channel):
     """Helper function to check and give achievements"""
     all_achievements = load_achievements()
     if achievement_id in all_achievements:
-        get_or_create_profile(user.id, user.display_name)
-        if unlock_achievement(user.id, user.display_name, achievement_id):
+        upsert_profile(user.id, user.display_name)
+        if unlock_achievement(user.id, achievement_id):
             achievement_data = all_achievements[achievement_id]
-            await send_achievement_notification(channel, user, achievement_id, achievement_data)
+            await send_achievement_notification(channel, user, achievement_data)
 
 
 

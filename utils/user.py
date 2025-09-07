@@ -1,3 +1,4 @@
+import sqlite3
 
 def get_user_data(user_id):
     """Get user cooldown data from database"""
@@ -51,7 +52,7 @@ def get_user_data(user_id):
         }
 
 # Get or create user profile
-def get_or_create_profile(user_id, username):
+def upsert_profile(user_id, username):
     conn = sqlite3.connect('bot_data.db')
     cursor = conn.cursor()
 
@@ -59,13 +60,13 @@ def get_or_create_profile(user_id, username):
     cursor.execute('SELECT * FROM user_profiles WHERE user_id = ?', (user_id,))
     profile = cursor.fetchone()
 
+    # upsert profile
     if not profile:
         # Create new profile
         cursor.execute('''
             INSERT INTO user_profiles (user_id, username, total_achievements)
             VALUES (?, ?, 0)
         ''', (user_id, username))
-        conn.commit()
     else:
         # Update username if changed
         cursor.execute('''
@@ -73,8 +74,8 @@ def get_or_create_profile(user_id, username):
             SET username = ?, last_updated = CURRENT_TIMESTAMP
             WHERE user_id = ?
         ''', (username, user_id))
-        conn.commit()
-
+    
+    conn.commit()
     conn.close()
 
 # Get user profile data

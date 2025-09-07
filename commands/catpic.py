@@ -1,7 +1,12 @@
-@bot.tree.command(name="catpic", description="Get a random cat picture!")
+import discord
+from discord import app_commands
+import os
+
 async def catpic_command(interaction: discord.Interaction):
     """Slash command to send a random cat picture"""
     try:
+        # Get cat_bot from the bot instance
+        cat_bot = interaction.client.cat_bot
         image_path, image_type = cat_bot.get_random_image()
 
         if image_path and os.path.exists(image_path):
@@ -47,3 +52,8 @@ async def catpic_command(interaction: discord.Interaction):
     except Exception as e:
         print(f"Error in catpic command: {e}")
         await interaction.response.send_message("An error occured.", ephemeral=True)
+
+def setup(bot):
+    @bot.tree.command(name="catpic", description="Get a random cat picture!")
+    async def catpic_slash_command(interaction: discord.Interaction):
+        await catpic_command(interaction)

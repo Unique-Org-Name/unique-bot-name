@@ -32,8 +32,7 @@ cat_bot = catbot.CatPicBot()
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
-bot = commands.Bot(command_prefix='!', intents=intents)
-bot.remove_command('help')  # Remove default help command
+bot = commands.Bot(command_prefix='!', intents=intents, application_id=int(os.getenv("appId")))
 try:
     with open("ai_config.json", "r") as f:
         ai_config = json.load(f)
@@ -68,15 +67,52 @@ hi_vars = ["hi", "Hi", "HI", "hello", "Hello", "HELLO"]
 last_spawn_time = None
 timer_task = None
 
+# Import the setup function from the events module
+from events.on_ready import setup
+from importlib import import_module
+
 # Setup instructions
-def main():
+async def main():
     """Main function with setup instructions"""
     printStartupMessage.printStartupMessage()
+    
+    # Set up the bot with configurations
+    bot.cat_bot = cat_bot  # Make cat_bot available to event handlers
+    bot.ai_config = ai_config  # Make AI config available to event handlers
+    
+    # Set up the on_ready event handler and other configurations
+    await setup(bot)
+
+
+    for mod in ["announcements", "info", "news", "roll", "catpic", "goofygif", "giveAchievements", "viewAchievements", "rebalance"]:
+        try:
+            import_module(f"commands.{mod}").setup(bot)
+            print(f"Loaded commands.{mod}")
+        except Exception as e:
+            print(f"Failed to load commands.{mod}: {e}")
+    
+    # Load other extensions/commands here if needed
+    # Example: await bot.load_extension('commands.my_command')
+    
     # bot token via .env
     BOT_TOKEN = str(os.getenv("TOKEN"))
-    bot.run(BOT_TOKEN)
+    if not BOT_TOKEN:
+        raise ValueError("No TOKEN found in environment variables")
+    
+    # Start the bot
+    async with bot:
+        try:
+            await bot.start(BOT_TOKEN)
+        except KeyboardInterrupt:
+            print("Shutting down...")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+        finally:
+            if not bot.is_closed():
+                await bot.close()
 
 if __name__ == "__main__":
-    main()
-
-bot.tree.clear_commands(guild=None)
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("Bot has been shut down")
